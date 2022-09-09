@@ -1,24 +1,26 @@
+
+# OpenWeatherMap
+This repository implements a web-based User Interface to Weather forecast data using  [OpenWeatherMap](https://openweathermap.org/api) API.
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Setup
 
-### `yarn start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-### Login credential
-Username: [notEmpty]
-<br>
-Password: [notEmpty]
-
+### Pre-Requisites
+```
+- Yarn 1.22.19
+- Node 16.10.0
+```
+### Scripts
+```npm start``` starts the app in dev mode on port 3000 <br>
+```npm build``` Builds the app for production to the `build` folder.\
+  
 ### Environment variables
+
+* `REACT_APP_WEATHER_BASE_URL`: BaseUrl for openweathermap API
+* `REACT_APP_OPEN_WEATHER_MAP_API_KEY`: AppId for opwnweaathermap API
+
+### Credential for login
 ```
-REACT_APP_WEATHER_BASE_URL=https://api.openweathermap.org
-REACT_APP_OPEN_WEATHER_MAP_API_KEY=fde8db82492327c7a48adb569e5d1426
+username: [notEmpty]
+password: [notEmpty]
 ```
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-
