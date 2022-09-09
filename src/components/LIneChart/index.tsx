@@ -3,7 +3,6 @@ import { Line, G2 } from "@ant-design/plots";
 import { each, findIndex } from "@antv/util";
 
 const LineChart = ({ ...rest }) => {
-  console.log("REST", rest);
   const { InteractionAction, registerInteraction, registerAction } = G2;
 
   G2.registerShape("point", "custom-point", {

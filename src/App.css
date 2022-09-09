@@ -20,8 +20,13 @@ body {
   flex-direction: "column";
 }
 
-.forecast-item :hover {
+.active  {
+  background-color: #f1f1f1;
+}
+
+.forecast-item:hover {
   cursor: pointer;
+  background-color: #f1f1f1;
 }
 
 .loader {

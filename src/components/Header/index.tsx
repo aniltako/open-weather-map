@@ -29,6 +29,7 @@ const NavHeader = observer(() => {
         padding: "10px",
         verticalAlign: "center",
         justifyContent: "space-between",
+        backgroundColor: "#43454C"
       }}
     >
       <Title level={3} style={{ color: "white", marginTop: "0.5rem" }}>

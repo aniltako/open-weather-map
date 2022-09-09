@@ -36,7 +36,9 @@ const ForecastList = observer(() => {
           span={3}
           key={forecastItem.dt}
           onClick={() => handleChangeWeather(forecastItem)}
-          className="forecast-item"
+          className={`forecast-item ${
+            forecastStore.selectedDate === forecastItem.dt ? "active" : ""
+          }`}
           style={{
             display: "flex",
             justifyContent: "center",

@@ -33,7 +33,7 @@ const Home = observer(() => {
             style={{
               width: "650px",
               margin: "auto",
-              padding: "10px",
+              padding: "10px 40px",
               backgroundColor: "#FFFFFF",
               minHeight: "550px",
               display: "flex",

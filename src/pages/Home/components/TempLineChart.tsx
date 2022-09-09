@@ -65,10 +65,7 @@ const TempLineChart = observer(() => {
   };
 
   return (
-    <div
-      className="weather-graph"
-      style={{ width: "500px", height: "250px", margin: "20px auto" }}
-    >
+    <>
       <div
         style={{
           margin: "10px",
@@ -85,8 +82,13 @@ const TempLineChart = observer(() => {
           onClick={() => changeSelectedWeather(NEXT)}
         ></Button>
       </div>
-      <LineChart {...config} />
-    </div>
+      <div
+        className="weather-graph"
+        style={{ width: "500px", height: "250px", margin: "20px auto" }}
+      >
+        <LineChart {...config} />
+      </div>
+    </>
   );
 });
 
