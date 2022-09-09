@@ -3,6 +3,7 @@ import { IMPERIAL, KATHMANDU, METRIC } from "constants/variablesConstant";
 import { cast, Instance, types, flow } from "mobx-state-tree";
 import moment from "moment";
 import { getWeatherforecasts } from "services/weatherService";
+import { convertUnixToDate } from "utils/dateUtils";
 
 export enum Pod {
   D = "d",
@@ -39,12 +40,12 @@ export enum TempType {
 export interface IWeatherModel extends Instance<typeof WeatherModel> {}
 
 export const WeatherModel = types.model({
-  dt: types.number,
+  dt: types.number, // datetime in unix
   main: types.model({
     temp: types.number,
     feels_like: types.number,
-    temp_min: types.number,
-    temp_max: types.number,
+    temp_min: types.number, // min temperature of day
+    temp_max: types.number, // max temperature of day
     pressure: types.number,
     sea_level: types.number,
     grnd_level: types.number,
@@ -126,7 +127,7 @@ export const ForecastStore = types
     data: types.maybeNull(ForecastModel),
     error: types.maybeNull(types.string),
     isLoading: types.boolean,
-    selectedDate: types.maybeNull(types.number),
+    selectedDate: types.maybeNull(types.number), // active weather date
   })
   .actions((self) => ({
     fetchWeathers: flow(function* fetchWeathers(
@@ -158,17 +159,22 @@ export const ForecastStore = types
     },
   }))
   .views((self) => ({
-    // groupbydate to show the temperature chart of day
-    // [{'June 9 2014': List[]}]
+    /*
+     * groupbydate List to show the temperature chart of day
+     * [{'June 9 2014': [{dt, main, list, weather ....}]}]
+     */
     get weatherListGroupByDate() {
       return (
         self.data?.list.reduce(
           (acc: WeatherListGroupByDate[], item: IWeatherModel) => {
-            const formattedDate = moment(item.dt * 1000).format(LL);
+            // formattedDate = "June 9 2014"
+            const formattedDate = convertUnixToDate(item.dt).format(LL);
+
             const index = acc.findIndex(
               (oldItem: WeatherListGroupByDate) =>
                 Object.keys(oldItem)[0] === formattedDate
             );
+            // check if formattedDate key exists
             if (index > -1) {
               const indexObject = acc[index];
               indexObject[formattedDate].push(item);
@@ -181,16 +187,19 @@ export const ForecastStore = types
         ) || []
       );
     },
-    get selectedWeather() {
+    // selected weather for weather details content
+    get selectedWeathers() {
       let dateString: string;
       if (self.selectedDate && moment(self.selectedDate, true).isValid()) {
-        dateString = moment(self.selectedDate * 1000).format(LL);
+        dateString = convertUnixToDate(self.selectedDate).format(LL);
       } else {
         dateString = moment().format(LL);
       }
 
-      return self.data?.list.find(
-        (weather) => moment(weather.dt * 1000).format(LL) === dateString
+      return (
+        self.data?.list.filter(
+          (weather) => convertUnixToDate(weather.dt).format(LL) === dateString
+        ) || []
       );
     },
   }));

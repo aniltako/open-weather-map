@@ -2,10 +2,11 @@ import React from "react";
 import { Col, Row } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMst } from "store";
-import { IWeatherModel, WeatherListGroupByDate } from "store/WeatherModel";
+import { IWeatherModel, WeatherListGroupByDate } from "store/ForecastModel";
 import moment from "moment";
 import Deg from "./Deg";
 import { useSearchParams } from "react-router-dom";
+import { dddd } from "constants/DateConstant";
 
 const ForecastList = observer(() => {
   const { forecastStore } = useMst();
@@ -24,8 +25,11 @@ const ForecastList = observer(() => {
 
   const list = forecastStore.weatherListGroupByDate.map(
     (forecastGroupByDate: WeatherListGroupByDate) => {
+      // forecastGroupByDate = {"June 9 2014": [{dt, main, list, weather ....}]}
       const formattedDate = Object.keys(forecastGroupByDate)[0];
+      // forecastList = [{dt, main, list, weather ....}]
       const forecastList = forecastGroupByDate[formattedDate];
+      // forcastItem = {dt, main, list, weather ....}
       const forecastItem = forecastList[0];
       return (
         <Col
@@ -41,7 +45,7 @@ const ForecastList = observer(() => {
             flexDirection: "column",
           }}
         >
-          <div>{moment(formattedDate).format("ddd")}</div>
+          <div>{moment(formattedDate).format(dddd)}</div>
           <div>
             <img src="/images/thunderstorms.png" alt="thunderstorms" />
           </div>

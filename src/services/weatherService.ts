@@ -9,7 +9,7 @@ export const getWeatherforecasts = <T>(params?: {
     url: `/data/2.5/forecast`,
     params: {
       ...{
-        appid: "fde8db82492327c7a48adb569e5d1426",
+        appid: process.env.REACT_APP_OPEN_WEATHER_MAP_API_KEY,
         cnt: 40,
       },
       ...params,

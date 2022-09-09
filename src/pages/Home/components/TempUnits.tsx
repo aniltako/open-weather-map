@@ -1,5 +1,5 @@
 import React from "react";
-import { isImperialUnits } from "store/WeatherModel";
+import { isImperialUnits } from "store/ForecastModel";
 import { useSearchParams } from "react-router-dom";
 import Deg from "./Deg";
 

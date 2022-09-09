@@ -1,13 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { useMst } from "store";
-import { WeatherListGroupByDate } from "store/WeatherModel";
-import moment from "moment";
+import { WeatherListGroupByDate } from "store/ForecastModel";
 import LineChart from "components/LIneChart";
 import { Button } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { LL } from "constants/DateConstant";
 import { useSearchParams } from "react-router-dom";
+import { convertUnixToDate } from "utils/dateUtils";
+import { NEXT, PRE } from "constants/variablesConstant";
+
+type WEATHER_INDEX = "PRE" | "NEXT";
 
 const TempLineChart = observer(() => {
   const { forecastStore } = useMst();
@@ -21,67 +24,37 @@ const TempLineChart = observer(() => {
     if (units) {
       params.units = units;
     }
+    // to maintain page state
     setSearchParams({ ...params, ...{ dt: `${dt}` } });
     forecastStore.setSelectedDate(dt);
   };
 
-  const getSelectedWeatherGroupByDate = (date: number | null) => {
-    if (!date) {
-      return [];
-    }
-    const index = getSelectedIndex(date);
-    if (index > -1) {
-      return getWeatherListByDateByIndex(index, date);
-    }
-    return [];
-  };
-
-  const getWeatherListByDateByIndex = (index: number, date: number) => {
-    return weatherListGroupByDate[index][
-      Object.keys(weatherListGroupByDate[index])[0]
-    ];
-  };
-
-  const getSelectedIndex = (date: number) => {
-    const formattedDate = moment(date * 1000).format(LL);
-    return weatherListGroupByDate.findIndex(
-      (weatherGroupByDate: WeatherListGroupByDate) =>
-        Object.keys(weatherGroupByDate)[0] === formattedDate
-    );
-  };
-
-  const setPreSelectedWeather = () => {
+  const changeSelectedWeather = (value: WEATHER_INDEX) => {
     if (selectedDate) {
-      const selectedIndex = getSelectedIndex(selectedDate);
-      if (selectedIndex !== 0) {
-        const nextWeatherList = getWeatherListByDateByIndex(
-          selectedIndex - 1,
-          selectedDate
-        );
-        changeSearchParam(nextWeatherList?.[0].dt);
-        forecastStore.setSelectedDate(nextWeatherList?.[0].dt);
+      let selectedIndex = getSelectedIndex(
+        weatherListGroupByDate,
+        selectedDate
+      );
+
+      if (value === PRE && selectedIndex !== 0) {
+        selectedIndex = selectedIndex - 1;
+      } else if (
+        value === NEXT &&
+        selectedIndex + 1 !== weatherListGroupByDate.length
+      ) {
+        selectedIndex = selectedIndex + 1;
       }
+      const nextWeatherList = getWeatherListByDateByIndex(
+        selectedIndex,
+        weatherListGroupByDate
+      );
+      changeSearchParam(nextWeatherList?.[0].dt);
+      forecastStore.setSelectedDate(nextWeatherList?.[0].dt);
     }
   };
 
-  const setNextSelectedWeather = () => {
-    if (selectedDate) {
-      const selectedIndex = getSelectedIndex(selectedDate);
-      if (selectedIndex + 1 !== weatherListGroupByDate.length) {
-        const nextWeatherList = getWeatherListByDateByIndex(
-          selectedIndex + 1,
-          selectedDate
-        );
-        changeSearchParam(nextWeatherList?.[0].dt);
-        forecastStore.setSelectedDate(nextWeatherList?.[0].dt);
-      }
-    }
-  };
-
-  const selectedWeatherList = getSelectedWeatherGroupByDate(selectedDate);
-
-  const data = selectedWeatherList.map((weather) => ({
-    Time: moment(weather.dt * 1000).format("HH"),
+  const data = forecastStore.selectedWeathers.map((weather) => ({
+    Time: convertUnixToDate(weather.dt).format("HH"),
     Temperature: weather.main.temp,
   }));
 
@@ -105,11 +78,11 @@ const TempLineChart = observer(() => {
       >
         <Button
           icon={<LeftOutlined />}
-          onClick={setPreSelectedWeather}
+          onClick={() => changeSelectedWeather(PRE)}
         ></Button>
         <Button
           icon={<RightOutlined />}
-          onClick={setNextSelectedWeather}
+          onClick={() => changeSelectedWeather(NEXT)}
         ></Button>
       </div>
       <LineChart {...config} />
@@ -118,3 +91,25 @@ const TempLineChart = observer(() => {
 });
 
 export default TempLineChart;
+
+const getSelectedIndex = (
+  weatherListGroupByDate: WeatherListGroupByDate[],
+  date: number
+) => {
+  // formattedDate 'June 9 2014'
+  const formattedDate = convertUnixToDate(date).format(LL);
+  // weatherListGroupByDate [{'June 9 2014': [{dt, main, list, weather ....}]}]
+  return weatherListGroupByDate.findIndex(
+    (weatherGroupByDate: WeatherListGroupByDate) =>
+      Object.keys(weatherGroupByDate)[0] === formattedDate
+  );
+};
+
+const getWeatherListByDateByIndex = (
+  index: number,
+  weatherListGroupByDate: WeatherListGroupByDate[]
+) => {
+  return weatherListGroupByDate[index][
+    Object.keys(weatherListGroupByDate[index])[0]
+  ];
+};

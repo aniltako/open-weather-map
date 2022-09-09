@@ -1,6 +1,6 @@
 import { Instance, onSnapshot, types } from "mobx-state-tree";
 import { createContext, useContext } from "react";
-import { ForecastStore } from "store/WeatherModel";
+import { ForecastStore } from "store/ForecastModel";
 import { UserStore } from "store/UserModel";
 import { getLocalStorageItem } from "utils/localstorageUtils";
 import { IS_LOGIN, TRUE } from "constants/variablesConstant";
@@ -13,7 +13,7 @@ const RootModel = types.model({
 const InitialValue = {
   userStore: {
     user: null,
-    isLogin: getLocalStorageItem(IS_LOGIN) === TRUE ? true : false,
+    isLogin: getLocalStorageItem(IS_LOGIN) === TRUE ? true : false, // get isLogin from localStorage
   },
   forecastStore: {
     data: null,

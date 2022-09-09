@@ -2,7 +2,7 @@ import React from "react";
 import { Checkbox } from "antd";
 import { useMst } from "store";
 import { useSearchParams } from "react-router-dom";
-import { isImperialUnits } from "store/WeatherModel";
+import { isImperialUnits } from "store/ForecastModel";
 
 const UnitsCheckbox = () => {
   const { forecastStore } = useMst();
